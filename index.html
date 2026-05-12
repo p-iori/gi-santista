@@ -43,7 +43,7 @@
             100% { transform: translateX(20px) rotate(10deg); }
         }
 
-        /* Estilos do Envelope Interativo - Tamanho Ajustado para o Spotify */
+        /* Estilos do Envelope Interativo - Tamanho Ajustado para a Playlist do Spotify */
         .env-wrapper {
             position: absolute;
             top: 50%;
@@ -60,8 +60,8 @@
 
         .envelope {
             position: relative;
-            width: 360px; /* Envelope ainda mais largo */
-            height: 240px; /* Envelope mais alto para acomodar a carta maior */
+            width: 360px; 
+            height: 240px; /* Envelope restaurado para a altura da música */
             background: #d85c80; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
@@ -121,7 +121,7 @@
             bottom: 10px;
             left: 10px;
             right: 10px;
-            height: 215px; /* Papel mais alto para caber o player sem cortar */
+            height: 215px; /* Papel ajustado para caber o player de música sem cortar */
             background: #fff;
             z-index: 2;
             transition: transform 0.5s ease;
@@ -133,6 +133,27 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+        }
+
+        /* Botão secreto no canto da carta */
+        .secret-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 35px; /* Área de clique maior */
+            height: 35px;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            font-size: 20px; /* Estrela maior */
+            cursor: pointer;
+            outline: none;
+            transition: color 0.3s;
+            z-index: 20; /* Garante que fica acima de tudo para poder clicar */
+        }
+
+        .secret-btn:hover {
+            color: #e91e63;
         }
 
         .letter h3 {
@@ -150,7 +171,7 @@
 
         #spotify-container {
             width: 100%;
-            height: 80px; /* Altura exata do mini-player */
+            height: 80px; /* Altura exata do mini-player de música */
             background: #f8f8f8;
             border-radius: 12px;
             display: flex;
@@ -172,9 +193,16 @@
         }
 
         .env-wrapper.open .letter {
-            transform: translateY(-160px); /* A carta sobe bem mais agora */
+            transform: translateY(-110px); /* Ajustado: a carta sobe menos, ficando mais centralizada */
             transition: transform 0.5s ease 0.3s; 
             z-index: 5; 
+        }
+
+        /* Nova classe para as imagens do Cássio flutuantes */
+        .cassio-img {
+            width: 50px; /* Tamanho base, será ajustado no JS */
+            height: auto;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
         }
     </style>
 </head>
@@ -183,6 +211,7 @@
     <div class="env-wrapper" id="envelope">
         <div class="envelope">
             <div class="letter">
+                <button class="secret-btn" id="magicBtn">★</button>
                 <h3>Para você!</h3>
                 <p>Nossa música do momento:</p>
                 <!-- Onde o player do Spotify vai aparecer -->
@@ -199,21 +228,29 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // === SUA LISTA DE MÚSICAS DO SPOTIFY AQUI ===
-            // Como pegar o ID: Vá no Spotify, clique em Compartilhar > Copiar Link da Música.
-            // O link será algo como: https://open.spotify.com/track/6UelLqGlWMcVH1E5c4H7lY?si=...
-            // O ID é a parte logo após "track/", neste caso: 6UelLqGlWMcVH1E5c4H7lY
+            // ... Músicas do Spotify continuam iguais ...
             const playlistIds = [
-                "4cOdK2wGLETKBW3PvgPWqT", // Exemplo: Never Gonna Give You Up
-                "3nqQXoyQOWXiESe5Aeyr2X", // Exemplo: You're Beautiful
-                "1Qrg8KqiBpW07V7PNxwwwL", // Exemplo: Yellow - Coldplay
-                "0VjIjW4GlUZAMYd2vXMi3b", // Exemplo: Blinding Lights
-                "7qiZfU4dY1lWllzX7mPBI3"  // Exemplo: Shape of You
+                "4cOdK2wGLETKBW3PvgPWqT", 
+                "3nqQXoyQOWXiESe5Aeyr2X", 
+                "1Qrg8KqiBpW07V7PNxwwwL", 
+                "0VjIjW4GlUZAMYd2vXMi3b", 
+                "7qiZfU4dY1lWllzX7mPBI3"  
             ];
 
             const envelope = document.getElementById('envelope');
             const spotifyContainer = document.getElementById('spotify-container');
+            const magicBtn = document.getElementById('magicBtn');
+            let useCassio = false; // Variável para controlar qual imagem flutua
             
+            // Impede que o clique no botão estrela feche a carta
+            magicBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                useCassio = !useCassio; // Alterna entre corações e a imagem
+                
+                // Muda a cor da estrelinha para saber que ativou!
+                magicBtn.style.color = useCassio ? '#e91e63' : '#ccc';
+            });
+
             envelope.addEventListener('click', () => {
                 const isOpen = envelope.classList.contains('open');
                 
@@ -241,7 +278,6 @@
                 envelope.classList.toggle('open');
             });
 
-            // Lógica dos corações de volta
             function createHeart() {
                 const container = document.createElement('div');
                 container.classList.add('heart-container');
@@ -253,15 +289,27 @@
                 const size = Math.random() * 25 + 15;
                 const opacity = Math.random() * 0.4 + 0.2;
                 
-                container.innerHTML = `
-                    <svg class="heart-svg" viewBox="0 0 32 29.6" style="width: ${size}px; height: ${size}px; fill: rgba(255, 255, 255, ${opacity});">
-                        <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2 c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
-                    </svg>
-                `;
+                // Se a variável for verdadeira, usa a imagem do Cássio. Se não, usa o SVG do coração.
+                if (useCassio) {
+                    // Tamanho da imagem um pouco maior que o coração
+                    const imgSize = size * 1.8; 
+                    // Link online adicionado para garantir que carrega na prévia
+                    container.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/pt/b/b4/Corinthians_simbolo.png" class="cassio-img" style="width: ${imgSize}px;">`;
+                } else {
+                    container.innerHTML = `
+                        <svg class="heart-svg" viewBox="0 0 32 29.6" style="width: ${size}px; height: ${size}px; fill: rgba(255, 255, 255, ${opacity});">
+                            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2 c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+                        </svg>
+                    `;
+                }
                 
-                const svgElement = container.querySelector('.heart-svg');
-                const swayDuration = Math.random() * 2 + 1.5;
-                svgElement.style.animation = `sway ${swayDuration}s ease-in-out infinite alternate`;
+                // Aplica a animação de balanço
+                const animatedElement = useCassio ? container.querySelector('.cassio-img') : container.querySelector('.heart-svg');
+                
+                if (animatedElement) {
+                    const swayDuration = Math.random() * 2 + 1.5;
+                    animatedElement.style.animation = `sway ${swayDuration}s ease-in-out infinite alternate`;
+                }
                 
                 document.body.appendChild(container);
                 
