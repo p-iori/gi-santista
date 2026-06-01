@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gi para de chorar</title>
+    <!-- Importando o Tailwind CSS para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Pequeno ajuste para uma rolagem suave e esconder a barra horizontal */
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        /* Oculta a barra de rolagem vertical para o visual flutuante ficar mais limpo */
+        #scroll-area::-webkit-scrollbar {
+            display: none;
+        }
+        #scroll-area {
+            -ms-overflow-style: none; /* IE e Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        /* Otimização de performance para as animações de rolagem (JS) */
+        .adjetivo-item {
+            will-change: transform, opacity;
+            transform-origin: center center;
+        }
+    </style>
+</head>
+<!-- Adicionada a imagem de fundo ao body -->
+<body class="bg-black text-slate-200 font-sans h-screen flex flex-col overflow-hidden relative bg-cover bg-center bg-no-repeat" style="background-image: url('images/fundo.svg');">
+
+    <!-- Imagens de Fundo (Girassóis) com blend mode para remover o fundo preto -->
+    <!-- Os tamanhos foram ajustados e as posições empurradas para as bordas -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center opacity-30">
+        
+    </div>
+
+    <!-- Cabeçalho (Posicionado de forma fixa e com pointer-events-none para não atrapalhar o toque na tela) -->
+    <header class="fixed top-[15vh] md:top-[20vh] left-0 w-full z-50 text-center pointer-events-none">
+        <div class="max-w-xl mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-md">Gi, pra mim você é:</h1>
+            <p class="text-sm md:text-base text-slate-400 mt-2">Role para baixo para descobrir...</p>
+        </div>
+    </header>
+
+    <!-- Área Rolável (Agora ocupa toda a tela para centralizar perfeitamente as palavras) -->
+    <div id="scroll-area" class="absolute inset-0 overflow-y-auto w-full scroll-smooth z-10">
+        
+        <!-- Contêiner principal da lista -->
+        <!-- O padding superior e inferior de 50vh garante que o primeiro e o último item cheguem exatamente no centro da tela -->
+        <main class="max-w-xl mx-auto pt-[50vh] pb-[50vh] px-4 flex flex-col items-center" id="lista-adjetivos">
+            <!-- Os adjetivos serão inseridos aqui pelo JavaScript -->
+        </main>
+
+        <!-- Elemento "Gatilho" para carregar mais itens -->
+        <div id="loading-trigger" class="flex justify-center items-center py-12 relative z-10">
+            <div class="flex items-center space-x-2 text-white">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="font-medium">Vai mais devagar fdp</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Uma lista inicial de adjetivos em português
+        const adjetivosBase = [
+            "Glamourosa", "Diva", "Dadivosa", "Musa", 
+            "Heroína", "Guerreira", "Formosa", "Cúmplice", "Parceira", 
+            "Protagonista", "Perfeita", "Inteligente", "Exuberante", 
+            "Deusa", "Poderosa", "Empoderada", "Avassaladora", "Estonteante", 
+            "Sensual", "Inspiradora", "Capaz", "Sagaz", 
+            "Linda", "Majestosa", "Companheira", "Transformadora", 
+            "Graciosa", "Amorosa", "Poética", "Espetacular", "Generosa", 
+            "Profética", "Ética", "Adjetiva", "Superlativa mulher",
+            "Feliz", "Virtuosa", "Amorosa", "Fiel", "Atraente",
+            "Carismática", "Sorridente", "Radiante", "Fabulosa", "Deslumbrante",
+            "Amável", "Sexy", "Cuidadosa", "Apaixonante", "Especial"
+        ];
+
+        const containerLista = document.getElementById('lista-adjetivos');
+        const trigger = document.getElementById('loading-trigger');
+        const scrollArea = document.getElementById('scroll-area');
+
+        // Função para escolher um adjetivo aleatório da nossa base
+        function obterAdjetivoAleatorio() {
+            const indice = Math.floor(Math.random() * adjetivosBase.length);
+            return adjetivosBase[indice];
+        }
+
+        // Função para adicionar novos elementos na página
+        function adicionarItens(quantidade) {
+            // Um pequeno fragmento de documento ajuda na performance antes de adicionar ao DOM
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < quantidade; i++) {
+                const palavra = obterAdjetivoAleatorio();
+                
+                // Criação do elemento para a palavra
+                const itemDiv = document.createElement('div');
+                
+                // Reduzi o padding e margem para as palavras ficarem um pouco mais juntas
+                itemDiv.className = 'adjetivo-item py-2 md:py-3 px-6 mb-3 md:mb-4 text-center cursor-default';
+                
+                // Fonte base um pouco menor para dar espaço para as adjacentes
+                itemDiv.innerHTML = `<span class="text-2xl md:text-3xl font-mono font-bold text-slate-600 transition-all duration-300 capitalize">${palavra}</span>`;
+                
+                fragment.appendChild(itemDiv);
+            }
+
+            containerLista.appendChild(fragment);
+            
+            // Atualiza os tamanhos e opacidades logo após adicionar os novos itens
+            requestAnimationFrame(atualizarVisualDosItens);
+        }
+
+        // Função que calcula o tamanho e transparência com base na posição
+        function atualizarVisualDosItens() {
+            const itens = document.querySelectorAll('.adjetivo-item');
+            const rectArea = scrollArea.getBoundingClientRect();
+            
+            // Encontra o centro do container rolável na tela
+            const centroY = rectArea.top + (rectArea.height / 2);
+            // Define a distância máxima (metade da tela) antes de sumir
+            const distanciaMaxima = rectArea.height / 2;
+
+            itens.forEach(item => {
+                const rectItem = item.getBoundingClientRect();
+                const itemCentroY = rectItem.top + (rectItem.height / 2);
+                
+                // Distância absoluta do item até o centro da tela
+                const distancia = Math.abs(centroY - itemCentroY);
+                
+                // Razão de 0 (no centro) a 1 (nas bordas extremas)
+                let razao = Math.min(distancia / distanciaMaxima, 1);
+
+                // CÁLCULO MÁGICO: Curva de Gauss (Sino)
+                // Aumentei a "largura" do pico para 55, para afetar sutilmente os vizinhos mais próximos
+                const larguraPico = 55; 
+                const picoCentral = Math.exp(-Math.pow(distancia, 2) / (2 * Math.pow(larguraPico, 2)));
+
+                // Escala base alterada para não diminuir tão bruscamente
+                const escalaBase = 0.8 - (razao * 0.4);
+                const escala = escalaBase + (picoCentral * 0.7); // Chega até 1.5 no centro
+                
+                // A opacidade base foi aumentada. Agora os vizinhos têm uma opacidade mínima garantida
+                const opacidadeBase = 0.3 - (razao * 0.5);
+                const opacidade = opacidadeBase + (picoCentral * 0.7);
+
+                // Aplica os estilos instantaneamente
+                item.style.transform = `scale(${escala.toFixed(3)})`;
+                item.style.opacity = Math.max(0, opacidade).toFixed(3);
+                
+                // Bônus visual: Muda a cor apenas da palavra que está dominando o centro
+                const span = item.querySelector('span');
+                if (picoCentral > 0.75) {
+                    span.classList.add('text-white', 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]');
+                    span.classList.remove('text-slate-600');
+                } else {
+                    span.classList.remove('text-white', 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]');
+                    span.classList.add('text-slate-600');
+                }
+            });
+        }
+
+        // Adiciona um "ouvinte" na rolagem para atualizar os itens enquanto o usuário rola
+        let atualizando = false;
+        scrollArea.addEventListener('scroll', () => {
+            if (!atualizando) {
+                window.requestAnimationFrame(() => {
+                    atualizarVisualDosItens();
+                    atualizando = false;
+                });
+                atualizando = true;
+            }
+        });
+
+        // Carrega 20 itens iniciais logo que a página abre
+        adicionarItens(20);
+
+        // Configuração do Intersection Observer
+        // Ele vai "vigiar" quando o elemento 'loading-trigger' aparecer na tela
+        const observador = new IntersectionObserver((entries) => {
+            const entrada = entries[0];
+            
+            // Se o gatilho estiver visível na tela (o usuário chegou ao fim)
+            if (entrada.isIntersecting) {
+                // Simulamos um pequeno delay de rede apenas para o efeito visual de "carregando"
+                setTimeout(() => {
+                    adicionarItens(50); // Adiciona mais 15 palavras de cada vez
+                }, 500); 
+            }
+        }, {
+            // Opções: observa a nossa nova área de rolagem interna
+            root: document.getElementById('scroll-area'),
+            rootMargin: '0px 0px 100px 0px' 
+        });
+
+        // Inicia a observação no elemento gatilho (que está no fim da página)
+        observador.observe(trigger);
+
+    </script>
+</body>
+</html>
