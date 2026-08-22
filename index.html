@@ -211,7 +211,7 @@
     <div class="env-wrapper" id="envelope">
         <div class="envelope">
             <div class="letter">
-                <button class="secret-btn" id="">★</button>
+                <button class="secret-btn" id="magicBtn">★</button>
                 <h3>Músicas que me lembram você gatinho</h3>
                 <p>Feche e abra a carta para ver mais músicas</p>
                 <!-- Onde o player do Spotify vai aparecer -->
@@ -300,7 +300,6 @@
                     // Tamanho da imagem um pouco maior que o coração
                     const imgSize = size * 1.8; 
                     // Link online adicionado para garantir que carrega na prévia
-                    container.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/pt/b/b4/Corinthians_simbolo.png" class="cassio-img" style="width: ${imgSize}px;">`;
                 } else {
                     container.innerHTML = `
                         <svg class="heart-svg" viewBox="0 0 32 29.6" style="width: ${size}px; height: ${size}px; fill: rgba(255, 255, 255, ${opacity});">
