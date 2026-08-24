@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gi para de chorar</title>
+    <title>Sarah</title>
     <!-- Importando o Tailwind CSS para estilização rápida e moderna -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -41,8 +41,8 @@
     <!-- Cabeçalho (Posicionado de forma fixa e com pointer-events-none para não atrapalhar o toque na tela) -->
     <header class="fixed top-[15vh] md:top-[20vh] left-0 w-full z-50 text-center pointer-events-none">
         <div class="max-w-xl mx-auto px-6 text-center">
-            <h1 class="text-3xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-md">Gi, pra mim você é:</h1>
-            <p class="text-sm md:text-base text-slate-400 mt-2">Role para baixo para descobrir...</p>
+            <h1 class="text-3xl md:text-6xl font-extrabold text-red-900 tracking-tight drop-shadow-md">Algumas das palavras que me lembram você:</h1>
+            <p class="text-sm md:text-base text-red-800 mt-2">Role para baixo para descobrir...</p>
         </div>
     </header>
 
@@ -57,7 +57,7 @@
 
         <!-- Elemento "Gatilho" para carregar mais itens -->
         <div id="loading-trigger" class="flex justify-center items-center py-12 relative z-10">
-            <div class="flex items-center space-x-2 text-white">
+            <div class="flex items-center space-x-2 text-red-950">
                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -108,7 +108,7 @@
                 itemDiv.className = 'adjetivo-item py-2 md:py-3 px-6 mb-3 md:mb-4 text-center cursor-default';
                 
                 // Fonte base um pouco menor para dar espaço para as adjacentes
-                itemDiv.innerHTML = `<span class="text-2xl md:text-3xl font-mono font-bold text-slate-600 transition-all duration-300 capitalize">${palavra}</span>`;
+                itemDiv.innerHTML = `<span class="text-2xl md:text-3xl font-mono font-bold text-red-950 transition-all duration-300 capitalize">${palavra}</span>`;
                 
                 fragment.appendChild(itemDiv);
             }
@@ -160,10 +160,10 @@
                 const span = item.querySelector('span');
                 if (picoCentral > 0.75) {
                     span.classList.add('text-white', 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]');
-                    span.classList.remove('text-slate-600');
+                    span.classList.remove('text-red-950');
                 } else {
-                    span.classList.remove('text-white', 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]');
-                    span.classList.add('text-slate-600');
+                    span.classList.remove('text-red-900', 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]');
+                    span.classList.add('text-red-950');
                 }
             });
         }
